@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Defer Example</title>
+</head>
+<body>
+    <!-- Em navegadores que não aceitam o atributo defer, a ordem dos alertas é “defer”, “script” e “load”. Em navegadores que o aceitam, a ordem dos alertas é “script”, “defer” e “load”. -->
+     
+    <script defer>
+        alert("defer");
+    </script>
+    <script>
+        alert("script");
+    </script>
+    <script>
+        window.onload = function () {
+            alert("load");
+        }
+    </script>
+</body>
+</html>
