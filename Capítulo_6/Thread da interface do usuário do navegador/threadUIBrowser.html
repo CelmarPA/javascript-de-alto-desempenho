@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser UI Thread Example</title>
+</head>
+<body>
+    <!-- 
+        O processo compartilhado pelo JavaScript e pelas atualizações da
+        interface do usuário é frequentemente chamado de thread da UI do
+        navegador (ainda que o termo “thread” não seja necessariamente
+        correto para todos os navegadores). O processo de thread da UI
+        trabalha com um simples sistema de fila onde as tarefas são
+        mantidas em espera até que ele esteja ocioso. Uma vez ocioso, a
+        próxima tarefa colocada na fila é recuperada e executada. Essas
+        tarefas consistem em código JavaScript a ser executado ou em
+        atualizações que devem ser realizadas à UI, incluindo re-desenhos
+        e reflows. Talvez a parte mais interessante desse processo seja o fato de que cada ação do usuário pode resultar na adição de uma ou mais tarefas à fila.
+    -->
+
+    <button onclick="handleClick()">Click Me</button>
+
+    <script type="text/javascript">
+        function handleClick() {
+            var div = document.createElement("div");
+            div.innerHTML = "Clicked!"
+            document.body.appendChild(div);
+        }
+    </script>
+</body>
+</html>
