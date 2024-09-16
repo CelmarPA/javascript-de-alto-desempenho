@@ -1,0 +1,135 @@
+<!-- 
+        Quando o Ajax tornou-se popular, o XML era o formato preferido de
+        dados. Havia muito a ser elogiado: extrema interoperabilidade (com suporte excelente tanto no lado servidor quanto no cliente),
+        formatação estrita e fácil validação. O JSON ainda não tinha sido
+        formalizado como um formato de troca e praticamente todas as
+        linguagens utilizadas em servidores tinham uma biblioteca
+        disponível para o trabalho com XML.
+        
+        Confira um exemplo com a codificação em XML de nossa lista de
+        usuários:
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<users total="4">
+    <user id="1">
+        <username>alice</username>
+        <realname>Alice Smith</realname>
+        <email>alice@alicesmith.com</email>
+    </user>
+    <user id="2">
+        <username>bob</username>
+        <realname>Bob Jones</realname>
+        <email>bob@bobjones.com</email>
+    </user>
+    <user id="3">
+        <username>carol</username>
+        <realname>Carol Williams</realname>
+        <email>carol@carolwilliams.com</email>
+    </user>
+    <user id="4">
+        <username>dave</username>
+        <realname>Dave Johnson</realname>
+        <email>dave@davejohnson.com</email>
+    </user>
+</users>
+
+<!-- 
+        Em comparação aos outros formatos, o XML é extremamente
+        verboso. Cada pedaço de dados demanda muita estrutura, o que
+        torna a proporção dados-estrutura extremamente baixa. O XML
+        também apresenta uma sintaxe levemente ambígua. Ao codificar
+        uma estrutura de dados em XML devemos tornar os parâmetros dos
+        objetos atributos do elemento objeto ou elementos filhos
+        independentes? Devemos utilizar nomes longos e descritivos para
+        as tags ou nomes pequenos que sejam eficientes, mas
+        indecifráveis? O parsing desta sintaxe é igualmente ambíguo, sendo necessário saber com antecedência o layout de uma resposta XML para poder entendê-la.
+
+        Em geral, o parsing de textos XML demanda muito esforço da parte
+        do programador JavaScript. Além de saber os detalhes da estrutura
+        antecipadamente, também é preciso saber exatamente como
+        quebrar e depois remontar essa estrutura em algo que se pareça
+        com um objeto JavaScript. Não se trata de um processo automático,
+        diferente de todos os outros três formatos de dados.
+        Veja um exemplo de como podemos fazer o parsing dessa resposta
+        particular XML em um objeto:
+-->
+
+function parseXML(responseXML) {
+    var users = [];
+    var userNodes = responseXML.getElementsByTagName("users");
+    var node, usernameNodes, usernameNode, username,
+        realnameNodes, realnameNode, realname,
+        emailNodes, emailNode, email;
+
+    for (var i = 0, len = userNodes.length; i < len; i++) {
+        node = userNodes[i];
+        username = realname = email = "";
+
+        usernameNodes = node.getElementsByTagName("username");
+        if (usernameNodes && usernameNodes[0]) {
+            usernameNode = usernameNodes[0];
+            username = (usernameNodes.firstChild) ? usernameNodes.firstChild.nodeValue : "";
+        }
+
+        realnameNodes = node.getElementsByTagName("realname");
+        if (realnameNodes && realnameNodes[0]) {
+            realnameNode = realnameNodes[0];
+            realname = (realnameNodes.firstChild) ? realnameNodes.firstChild.nodeValue : "";
+        }
+
+        emailNodes = node.getElementsByTagName("email");
+        if (emailNodes && emailNodes[0]) {
+            emailNode = emailNodes[0];
+            email = (emailNodes.firstChild) ? emailNodes.firstChild.nodeValue : "";
+        }
+
+        users[i] = {
+            id: node.getAttribute("id"),
+            username: username,
+            realname: realname,
+            email: email
+        };
+    }
+    return users;
+}
+
+<!-- 
+        Como podemos ver, temos que conferir a existência de cada tag
+        antes que seu valor seja lido. É uma abordagem muito dependente
+        da estrutura do XML.
+        Uma abordagem mais eficiente seria a codificação de cada um
+        desses valores como um atributo da tag <user>. Com isso, temos um
+        arquivo de tamanho menor para o mesmo volume de dados. A
+        seguir, podemos ver um exemplo da lista de usuários quando
+        codificamos os valores como atributos:
+-->
+<?xml version="1.0" encoding='UTF-8'?>
+    <users total="4">
+    <user id="1-id001" username="alice" realname="Alice Smith"
+    email="alice@alicesmith.com" />
+    <user id="2-id001" username="bob" realname="Bob Jones"
+    email="bob@bobjones.com" />
+    <user id="3-id001" username="carol" realname="Carol Williams"
+    email="carol@carolwilliams.com" />
+    <user id="4-id001" username="dave" realname="Dave Johnson"
+    email="dave@davejohnson.com" />
+</users>
+
+<!-- 
+        A análise dessa resposta XML simplificada é consideravelmente
+        mais fácil:
+-->
+function parseXML(responseXML) {
+    var users = [];
+    var userNodes = responseXML.getElementByTagName("users");
+
+    for (var i = 0, len = userNodes.length; i < len; i++) {
+        users[i] = {
+            id: userNodes[i].getAttribute("id"),
+            username: userNodes[i].getAttribute("username"),
+            realname: userNodes[i].getAttribute("realname"),
+            email: userNodes[i].getAttribute("email")
+        };
+    }
+    return users;
+}
