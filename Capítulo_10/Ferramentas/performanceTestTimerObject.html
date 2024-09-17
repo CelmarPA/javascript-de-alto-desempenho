@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-bt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Test</title>
+</head>
+<body>
+    <script>
+        var count = 10000,
+            i, element;
+
+        var Timer = {
+            _data: {},
+            start: function (key) {
+                Timer._data[key] = new Date();
+            },
+            stop: function (key) {
+                var time = Timer._data[key];
+                if (time) {
+                    Timer._data[key] = new Date() - time;
+                }
+            },
+            getTime: function (key) {
+                return Timer._data[key];
+            }
+        };
+
+        Timer.start("createElement");
+
+        for (i = 0; i < count; i++) {
+            element = document.createElement("div");
+        }
+
+        Timer.stop("createElement");
+
+        alert("Created " + count + " elements in " + Timer.getTime("createElement") + "ms");
+
+
+        Timer.start("cloneNode");
+
+        for (i = 0; i < count; i++) {
+            element = element.cloneNode(false);
+        }
+
+        Timer.stop("cloneNode");
+
+        alert("Cloned " + count + " elements in " + Timer.getTime("cloneNode") + "ms");
+
+    </script>
+</body>
+</html>

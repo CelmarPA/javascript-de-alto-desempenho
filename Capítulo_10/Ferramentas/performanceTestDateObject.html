@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-bt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Test</title>
+</head>
+<body>
+    <script>
+        var start = new Date(),
+            count = 10000,
+            i, element, time;
+
+        for (i = 0; i < count; i++) {
+            element = document.createElement("div");
+        }
+
+        time = new Date() - start;
+        alert("Created " + count + " elements in " + time + "ms");
+
+        start = new Date();
+
+        for (i = 0; i < count; i++) {
+            element = element.cloneNode(false);
+        }
+
+        time = new Date() - start;
+        alert("Cloned " + count + " elements in " + time + "ms");
+    </script>
+</body>
+</html>
