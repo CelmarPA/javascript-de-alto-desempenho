@@ -1,0 +1,59 @@
+<!-- 
+        Uma vez que a sintaxe da linguagem de programação C é próxima à apresentada pelo JavaScript, o pré-processador C (C preprocessor, ou cpp) é uma boa escolha. Confira a aparência do alvo do Ant:
+-->
+<target name="js.preprocess" depends="js.concatenate">
+    <apply executable="cpp" dest="${build.dir}">
+        <fileset dir="${build.dir}"
+        includes="concatenated.js"/>
+        <arg line="-P -C -DDEBUG"/>
+        <srcfile/>
+        <targetfile/>
+        <mapper type="glob"
+        from="concatenated.js"
+        to="preprocessed.js"/>
+    </apply>
+</target>
+
+<!-- 
+        Esse alvo, que depende, por sua vez, do alvo js.concatenate, cria o arquivo preprocessed.js no diretório build como resultado da execução do cpp no arquivo concatenado anteriormente. Observe que o cpp é executado utilizando as opções padrões –P (que inibe a geração de marcadores de linha) e –C (que não descarta os comentários). Nesse exemplo, o macro DEBUG também é definido.
+
+        Com esse alvo, você pode agora utilizar a definição macro (#define, #undef) e as diretrizes de compilação condicionais (#if, #ifdef, #ifndef, #else, #elif, #endif) diretamente dentro dos arquivos JavaScript, permitindo, por exemplo, embutir condicionalmente (ou remover) o código de definição de perfil:
+-->
+#ifdef DEBUG
+(new YAHOO.util.YUILoader({
+require: ['profiler'],
+onSuccess: function(o) {
+YAHOO.tool.Profiler.registerFunction('foo', window);
+}
+})).insert();
+#endif
+
+<!-- 
+        Caso você pretenda utilizar macros multilinhas, não se esqueça de
+        utilizar o caractere Unix de fim de linha (LF). Você pode utilizar a tarefa Ant fixcrlf para fazer automaticamente essa correção. Outro exemplo, não estritamente relacionado ao desempenho, mas que demonstra quão poderoso pode ser o processamento JavaScript, é a utilização dos “macros variadic” (macros que aceitam um número variável de argumentos) e a inclusão de arquivos para implementar afirmações JavaScript. Considere o seguinte arquivo, chamado include.js:
+-->
+#ifndef _INCLUDE_JS_
+#define _INCLUDE_JS_
+#ifdef DEBUG
+function assert(condition, message) {
+// Manipule a afirmação exibindo uma mensagem de alerta
+// possivelmente contendo um rastro de pilha como exemplo.
+}
+#define ASSERT(x, ...) assert(x, ## __VA_ARGS__)
+#else
+#define ASSERT(x, ...)
+#endif /* DEBUG */
+#endif /* _INCLUDE_JS_ */
+
+<!-- 
+        Agora você pode escrever código JavaScript com a seguinte aparência:
+-->
+#include "include.js"
+function myFunction(arg) {
+ASSERT(YAHOO.lang.isString(argvar), "arg should be a string");
+...
+#ifdef DEBUG
+YAHOO.log("Log this in debug mode only");
+#endif
+...
+}

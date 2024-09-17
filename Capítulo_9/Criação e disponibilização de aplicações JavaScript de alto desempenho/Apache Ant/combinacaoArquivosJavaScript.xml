@@ -1,0 +1,41 @@
+<!-- 
+        A primeira e possivelmente mais importante diretriz para 
+        aceleração de seu website, especialmente no que diz respeito à 
+        primeira visita de seus usuários, é a redução do número de 
+        solicitações HTTP necessárias para renderização da página.
+   
+        O Apache Ant apresenta a habilidade de combinar vários arquivos
+        por meio da tarefa concat. Entretanto, é importante lembrarmos 
+        que arquivos JavaScript normalmente têm de ser concatenados em 
+        uma ordem específica para que as dependências sejam respeitadas. 
+        Uma vez que elas tenham sido estabelecidas, podemos preservar a 
+        ordem dos elementos utilizando um filelist ou uma combinação de 
+        elementos fileset. Confira a aparência do alvo do Ant: 
+-->
+
+<target name="js.concatenate">
+    <concat destfile="${build.dir}/concatenated.js">
+        <filelist dir="${src.dir}"
+        files="a.js, b.js"/>
+        <fileset dir="${src.dir}"
+        includes="*.js"
+        excludes="a.js, b.js"/>
+    </concat>
+</target>
+
+<!-- 
+        Esse alvo cria o arquivo concatenated.js no diretório build, como 
+        resultado da concatenação de a.js, seguida por b.js, seguida por 
+        todos os outros arquivos sob o diretório de origem em ordem 
+        alfabética.Observe que se qualquer um dos arquivos de origem 
+        (exceto talvez o último) não terminar com um ponto-e-vírgula ou 
+        com um fim de linha, o arquivo concatenado resultante poderá não 
+        conter código JavaScript válido. Isso pode ser corrigido 
+        instruindo o Ant a verificar se cada arquivo de origem 
+        concatenado termina com um caractere de fim de linha, utilizando 
+        o atributo fixlastline:
+-->
+
+<concat destfile="${build.dir}/concatenated.js" fixlastline="yes">
+...
+</concat>
